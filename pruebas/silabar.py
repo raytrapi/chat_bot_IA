@@ -31,7 +31,7 @@ consonantesNoSeparables={
 longitudTiposCaracter=len(tiposCaracter)
 prefijos=["intro", "intra","micro", "multi", "sobre", "super", "abs","anti", "auto", "post", "hemi", "hipo", "meta", "mega", "omni", "tele", "pre", "pos", "sin","sub", "an", "bi", "co", "in", "im", "re"]
 sufijos=["arquía", "filia", "isimo", "cidio", "logía", "ultra", "audi", "ismo", "cida", "des", "dis", "ito", "ita", "azo","de", "di"]
-def obtenerSilabas(palabra):
+def obtenerSilabas(palabra,sinFinLinea=False):
    silabas=[]
    sinVocal=True
    silaba=""
@@ -95,6 +95,7 @@ def obtenerSilabas(palabra):
       separar=(cMinuscula in consonantesNoSeparables and consonantesNoSeparables[cMinuscula]==cSiguiente) or tipoCaracter>4 or tipoCaracterIz>4
       separar=separar or (cMinuscula == 't' and cAnterior=='s')
       separar=separar or (cMinuscula == 'b' and cAnterior=='m')
+      separar=separar or (tipoCaracter==0 or tipoCaracter==len(tiposCaracter))
       junto=tipoCaracter==4 and (tipoCaracterIz in [1,2,3] and tipoCaracterDe not in [1,2,3]) and len(silaba)>1
       junto=junto or (tipoCaracterIz in [1,2] and tipoCaracter in [1,2,3])or (tipoCaracterIz in [1,2,3] and tipoCaracter in [1,2])
       #junto=junto or (tipoCaracter == "m" and cSiguiente=="b")
@@ -103,10 +104,14 @@ def obtenerSilabas(palabra):
                sinVocal=False
          silaba+=c
       else:
-         if len(silaba)==1 and obtenerTipoCaracter(silaba)==4 and len(silabas)>0:
+         if len(silaba)==1 and obtenerTipoCaracter(silaba)==4 and len(silabas)>0 and obtenerTipoCaracter(silabas[-1]) not in [0, len(tiposCaracter)]:
             silabas[len(silabas)-1]+=silaba
          else:
             silabas.append(silaba)
+         if (tipoCaracter==0 or tipoCaracter==len(tiposCaracter)):
+            silabas.append(c)
+            c=""
+         
          silaba=c
          #caracteresGuardados=""
          sinVocal=tipoCaracter not in [1,2,3]
@@ -116,12 +121,15 @@ def obtenerSilabas(palabra):
       iSiguiente=i+2
       #tipoUltimoCaracter=tipoCaracter
       #caracterAnterior=c
-   if tipoCaracter==4 and len(silabas)>0 and len(silaba)==1:
+   if tipoCaracter==4 and len(silabas)>0 and len(silaba)==1 and obtenerTipoCaracter(silabas[-1]) not in [0, len(tiposCaracter)]:
       silabas[len(silabas)-1]+=silaba
    else:
       silabas.append(silaba)
    silabas=silabas+su_
-   silabas[len(silabas)-1]+="_"
+   if sinFinLinea:
+      silabas.append(" ")
+   else:
+      silabas[len(silabas)-1]+="_"
    return silabas
 
 '''

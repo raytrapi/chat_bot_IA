@@ -55,11 +55,11 @@ def vocabulario1(linea, caracterSeparacion=' ', caracteresPuntuacion=['!','"','#
         parrafo=[]
     return palabras,posiciones
 
-def vocabulario(frase, voc=[None,"_^_","_$_"]):
+def vocabulario(frase, voc=[None,"_^_","_$_"],sinFinLinea=False):
    palabras=frase.split()
    posiciones=[]
    for palabra in palabras:
-      vocTemp=silabar.obtenerSilabas(palabra)
+      vocTemp=silabar.obtenerSilabas(palabra,sinFinLinea)
       for v in vocTemp:
          if v not in voc:
             voc.append(v)
